@@ -27,7 +27,6 @@ const app = Vue.createApp({
         this.envoy_cm = CodeMirror.fromTextArea(envoyArea, {
             lineNumbers: true,
             mode: 'yaml',
-            height: 'auto',
         });
         this.envoy_cm.setSize('100%', '100%');
 
