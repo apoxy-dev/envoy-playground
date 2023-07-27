@@ -4,7 +4,7 @@ function sleep(ms) {
 const app = Vue.createApp({
     data() {
         return {
-            nginx_config: "",
+            envoy_config: "",
             curl_command: "",
             curl_result: "",
             nginx_cm: undefined,
@@ -18,12 +18,12 @@ const app = Vue.createApp({
     mounted: async function() {
         // load state
         const state = this.loadFromHash() || this.loadFromLocalStorage() || (await this.loadDefault());
-        this.nginx_config = state.nginx_config;
+        this.envoy_config = state.envoy_config;
         this.curl_command = state.curl_command;
 
         // create nginx codemirror
         const nginxArea = document.querySelector('#nginx');
-        nginxArea.innerHTML = this.nginx_config;
+        nginxArea.innerHTML = this.envoy_config;
         this.nginx_cm = CodeMirror.fromTextArea(nginxArea, {
             lineNumbers: true,
             mode: 'nginx',
@@ -44,15 +44,15 @@ const app = Vue.createApp({
         this.curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
     },
     methods: {
-        update: function(nginx_config, curl_command) {
-            if (nginx_config) {
-                this.nginx_config = nginx_config;
+        update: function(envoy_config, curl_command) {
+            if (envoy_config) {
+                this.envoy_config = envoy_config;
             }
             if (curl_command) {
                 this.curl_command = curl_command;
             }
             localStorage.setItem('state', JSON.stringify({
-                nginx_config: this.nginx_config,
+                envoy_config: this.envoy_config,
                 curl_command: this.curl_command,
             }));
         },
@@ -60,7 +60,7 @@ const app = Vue.createApp({
         copyURL: async function(event) {
             event.preventDefault();
             const state = {
-                nginx_config: this.nginx_config,
+                envoy_config: this.envoy_config,
                 curl_command: this.curl_command,
             };
             const hash = btoa(JSON.stringify(state));
@@ -80,10 +80,10 @@ const app = Vue.createApp({
         },
 
         loadDefault: async function() {
-            const configs = await fetch('nginx_configs.json');
+            const configs = await fetch('envoy_configs.json');
             this.default_configs = await configs.json();
             return {
-                'nginx_config': this.default_configs['basic.conf'],
+                'envoy_config': this.default_configs['basic.conf'],
                 'curl_command': 'http --pretty format get http://localhost:80/get',
             }
         },
@@ -136,7 +136,7 @@ const app = Vue.createApp({
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    nginx_config: this.nginx_config,
+                    envoy_config: this.envoy_config,
                     command: this.curl_command,
                 })
             });

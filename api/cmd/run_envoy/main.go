@@ -1,9 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -38,19 +39,26 @@ type RunResponse struct {
 }
 
 func run(envoyConfig string, command string) (string, error) {
+	configFile, err := ioutil.TempFile("/tmp", "envoy.*.yaml")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp config file: %s", err)
+	}
+	defer os.Remove(configFile.Name())
+	if _, err := configFile.Write([]byte(envoyConfig)); err != nil {
+		return "", fmt.Errorf("failed to write config file: %s", err)
+	}
+
 	httpbin_cmd := exec.Command("go-httpbin", "-port", "7777")
 	if err := httpbin_cmd.Start(); err != nil {
 		return "", fmt.Errorf("failed to start go-httpbin: %s", err)
 	}
 	defer kill(httpbin_cmd)
 
-	envoy_cmd := exec.Command("func-e", "run", "--config-yaml", envoyConfig, "--log-level", "error")
+	envoy_cmd := exec.Command("envoy", "-c", configFile.Name(), "--log-level", "error")
 	envoy_cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	var stderr bytes.Buffer
+	envoy_cmd.Stderr = &stderr
 	ch := make(chan error)
-	stderr, err := envoy_cmd.StderrPipe()
-	if err != nil {
-		return "", fmt.Errorf("failed to get stderr pipe: %s", err)
-	}
 	go func() {
 		ch <- envoy_cmd.Run()
 	}()
@@ -61,9 +69,7 @@ func run(envoyConfig string, command string) (string, error) {
 		if err == nil {
 			break
 		}
-		fmt.Println("Envoy failed to start: ", err)
-		logs, _ := io.ReadAll(stderr)
-		return "", fmt.Errorf("envoy failed to start. Error logs:\n\n %s", string(logs))
+		return "", fmt.Errorf("envoy failed to start (exec error: %v). stderr:\n\n %b", err, stderr)
 	case <-time.After(100 * time.Millisecond):
 		defer term(envoy_cmd)
 		break
@@ -79,9 +85,8 @@ func run(envoyConfig string, command string) (string, error) {
 		return string(output), err
 	}
 
-	logs, _ := io.ReadAll(stderr)
-	if logs != nil {
-		err := fmt.Errorf("envoy error logs:\n\n %s", string(logs))
+	if stderr.Len() > 0 {
+		err := fmt.Errorf("envoy error logs:\n\n %s", stderr.String())
 		return string(output), err
 	}
 	return string(output), nil

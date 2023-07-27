@@ -13,11 +13,12 @@ FROM ubuntu:20.04
 RUN apt-get update && apt-get install -y curl bubblewrap gpg
 
 RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg && \
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list && \
+    apt-get update && apt-get install -y httpie
 
-RUN apt-get update && apt-get install -y httpie
-
-RUN curl https://func-e.io/install.sh | bash -s -- -b /usr/local/bin
+RUN if [ "$(arch)" = "aarch64" ]; then ARCH=aarch_64; else ARCH=x86_64; fi && \
+    curl -sL https://github.com/envoyproxy/envoy/releases/download/v1.27.0/envoy-1.27.0-linux-${ARCH} -o /usr/local/bin/envoy && \
+    chmod +x /usr/local/bin/envoy
 
 COPY --from=go /go/bin/go-httpbin /usr/local/bin/go-httpbin
 COPY --from=go /app/envoy-playground /app/envoy-playground
