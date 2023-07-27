@@ -69,7 +69,7 @@ func run(envoyConfig string, command string) (string, error) {
 		if err == nil {
 			break
 		}
-		return "", fmt.Errorf("envoy failed to start (exec error: %v). stderr:\n\n %v", err, stderr)
+		return "", fmt.Errorf("envoy failed to start (exec error: %v). stderr:\n\n %s", err, stderr.String())
 	case <-time.After(100 * time.Millisecond):
 		defer term(envoy_cmd)
 		break
