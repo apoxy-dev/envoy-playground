@@ -27,7 +27,8 @@ type RunResponse struct {
 
 func main() {
 	http.HandleFunc("/health", healthHandler)
-	http.Handle("/", wrapLogger(http.HandlerFunc(runHandler)))
+	http.Handle("/api", wrapLogger(http.HandlerFunc(runHandler)))
+	http.Handle("/", http.FileServer(http.Dir("/app/static")))
 	fmt.Println("Listening on 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -24,6 +24,8 @@ COPY --from=go /go/bin/go-httpbin /usr/local/bin/go-httpbin
 COPY --from=go /app/envoy-playground /app/envoy-playground
 COPY --from=go /app/run_envoy /app/run_envoy
 
+ADD ./static /app/static
+
 WORKDIR /app
 
 CMD ["/app/envoy-playground"]

@@ -86,7 +86,7 @@ const app = Vue.createApp({
             this.default_configs = await configs.json();
             return {
                 'envoy_config': this.default_configs['basic.conf'],
-                'curl_command': 'http --pretty format get http://localhost:80/get',
+                'curl_command': 'http --pretty format get http://localhost:10000/get',
             }
         },
 
@@ -132,7 +132,7 @@ const app = Vue.createApp({
         run: async function(event) {
             event.preventDefault();
             this.loading = true;
-            let response = await fetch('http://localhost:8082/', {
+            let response = await fetch('http://localhost:8080/api', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
