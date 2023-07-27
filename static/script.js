@@ -1,14 +1,16 @@
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+let envoy_cm = null;
+let curl_cm = null;
+
 const app = Vue.createApp({
     data() {
         return {
             envoy_config: "",
             curl_command: "",
             curl_result: "",
-            envoy_cm: undefined,
-            curl_cm: undefined,
             default_configs: {},
             error: false,
             loading: false,
@@ -24,24 +26,24 @@ const app = Vue.createApp({
         // create envoy codemirror
         const envoyArea = document.querySelector('#envoy');
         envoyArea.innerHTML = this.envoy_config;
-        this.envoy_cm = CodeMirror.fromTextArea(envoyArea, {
+        envoy_cm = CodeMirror.fromTextArea(envoyArea, {
             lineNumbers: true,
             mode: 'yaml',
         });
-        this.envoy_cm.setSize('100%', '100%');
+        envoy_cm.setSize('100%', '100%');
 
         // create curl codemirror
         const curlArea = document.querySelector('#curl');
         curlArea.innerHTML = this.curl_command;
-        this.curl_cm = CodeMirror.fromTextArea(curlArea, {
+        curl_cm = CodeMirror.fromTextArea(curlArea, {
             lineNumbers: true,
             mode: 'shell',
         });
-        this.curl_cm.setSize('100%', '100%');
+        curl_cm.setSize('100%', '100%');
 
         // set change handlers
-        this.envoy_cm.on('change', cm => this.update(cm.getValue(), undefined))
-        this.curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
+        envoy_cm.on('change', cm => this.update(cm.getValue(), undefined))
+        curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
     },
     methods: {
         update: function(envoy_config, curl_command) {
