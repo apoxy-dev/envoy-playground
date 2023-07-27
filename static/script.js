@@ -29,7 +29,7 @@ const app = Vue.createApp({
             mode: 'yaml',
             height: 'auto',
         });
-        this.curl_cm.setSize('100%', '100%');
+        this.envoy_cm.setSize('100%', '100%');
 
         // create curl codemirror
         const curlArea = document.querySelector('#curl');
@@ -81,7 +81,7 @@ const app = Vue.createApp({
         },
 
         loadDefault: async function() {
-            const configs = await fetch('envoy_configs.json');
+            const configs = await fetch('default_configs.json');
             this.default_configs = await configs.json();
             return {
                 'envoy_config': this.default_configs['basic.conf'],
