@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -36,36 +37,35 @@ type RunResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
-func run(nginxConfig string, command string) (string, error) {
-	configFile := "/tmp/nginx_config"
-	errorFile := "/tmp/nginx_errors"
-
-	if err := os.WriteFile(configFile, []byte(nginxConfig), 0666); err != nil {
-		return "", fmt.Errorf("Error creating %s: %s", configFile, err)
-	}
-	defer os.Remove(configFile)
-
+func run(envoyConfig string, command string) (string, error) {
 	httpbin_cmd := exec.Command("go-httpbin", "-port", "7777")
 	if err := httpbin_cmd.Start(); err != nil {
 		return "", fmt.Errorf("failed to start go-httpbin: %s", err)
 	}
 	defer kill(httpbin_cmd)
 
-	directives := fmt.Sprintf("daemon off; pid /tmp/%s.pid;", randSeq(16))
-	nginx_cmd := exec.Command("nginx", "-c", configFile, "-e", errorFile, "-g", directives)
-	nginx_cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	envoy_cmd := exec.Command("func-e", "run", "--config-yaml", envoyConfig, "--log-level", "error")
+	envoy_cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	ch := make(chan error)
+	stderr, err := envoy_cmd.StderrPipe()
+	if err != nil {
+		return "", fmt.Errorf("failed to get stderr pipe: %s", err)
+	}
 	go func() {
-		ch <- nginx_cmd.Run()
+		ch <- envoy_cmd.Run()
 	}()
 
 	// Check for errors
 	select {
-	case <-ch:
-		logs, _ := os.ReadFile(errorFile)
-		return "", fmt.Errorf("nginx failed to start. Error logs:\n\n %s", string(logs))
+	case err := <-ch:
+		if err == nil {
+			break
+		}
+		fmt.Println("Envoy failed to start: ", err)
+		logs, _ := io.ReadAll(stderr)
+		return "", fmt.Errorf("envoy failed to start. Error logs:\n\n %s", string(logs))
 	case <-time.After(100 * time.Millisecond):
-		defer term(nginx_cmd)
+		defer term(envoy_cmd)
 		break
 	}
 	curlArgs := strings.Split(strings.TrimSpace(command), " ")
@@ -79,9 +79,9 @@ func run(nginxConfig string, command string) (string, error) {
 		return string(output), err
 	}
 
-	logs, _ := os.ReadFile(errorFile)
-	if strings.Contains(string(logs), "[error]") {
-		err := fmt.Errorf("nginx error logs:\n\n %s", string(logs))
+	logs, _ := io.ReadAll(stderr)
+	if logs != nil {
+		err := fmt.Errorf("envoy error logs:\n\n %s", string(logs))
 		return string(output), err
 	}
 	return string(output), nil

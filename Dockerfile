@@ -1,23 +1,28 @@
-FROM golang:1.17 AS go
+FROM golang:1.18 AS go
 
-RUN git clone --depth=1 https://github.com/jvns/go-httpbin /go-httpbin
-WORKDIR  /go-httpbin
-RUN make
+RUN go install github.com/mccutchen/go-httpbin/v2/cmd/go-httpbin@v2.10.0
+
+WORKDIR /app
 
 ADD ./api /app
-WORKDIR /app
 RUN go build
-RUN go build ./cmd/run_nginx
+RUN go build ./cmd/run_envoy
 
-FROM nginx:1.21
+FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install -y curl httpie && apt-get clean
-RUN apt-get -y install libcap2-bin
-RUN apt-get -y install bubblewrap
-COPY --from=go /go-httpbin/dist/go-httpbin /usr/bin/go-httpbin
-COPY --from=go /app/nginx-sandbox /app/nginx-sandbox
-COPY --from=go /app/run_nginx /app/run_nginx
+RUN apt-get update && apt-get install -y curl bubblewrap gpg
+
+RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list
+
+RUN apt-get update && apt-get install -y httpie
+
+RUN curl https://func-e.io/install.sh | bash -s -- -b /usr/local/bin
+
+COPY --from=go /go/bin/go-httpbin /usr/local/bin/go-httpbin
+COPY --from=go /app/envoy-playground /app/envoy-playground
+COPY --from=go /app/run_envoy /app/run_envoy
 
 WORKDIR /app
 
-CMD ["/app/nginx-sandbox"]
+CMD ["/app/envoy-playground"]

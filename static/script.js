@@ -130,7 +130,7 @@ const app = Vue.createApp({
         run: async function(event) {
             event.preventDefault();
             this.loading = true;
-            let response = await fetch('https://nginx-sandbox.fly.dev/', {
+            let response = await fetch('http://localhost:8082/', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",

@@ -17,7 +17,7 @@ import (
 var healthcheck string
 
 type RunRequest struct {
-	NginxConfig string `json:"nginx_config"`
+	EnvoyConfig string `json:"envoy_config"`
 	Command     string `json:"command"`
 }
 type RunResponse struct {
@@ -99,13 +99,10 @@ func runHandler(w http.ResponseWriter, r *http.Request) {
 		"--unshare-pid",
 		"--dev", "/dev",
 		"--proc", "/proc",
-		"--bind-try", "/var/lib/nginx/", "/var/lib/nginx/", // only on laptop
-		"--dir", "/var/log/nginx",
 		"--dir", "/tmp",
 		"--dir", "/root",
-		"--dir", "/var/cache/nginx",
 
-		"/app/run_nginx", req.NginxConfig, req.Command,
+		"/app/run_envoy", req.EnvoyConfig, req.Command,
 	)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
