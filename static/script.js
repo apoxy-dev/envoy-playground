@@ -132,7 +132,7 @@ const app = Vue.createApp({
         run: async function(event) {
             event.preventDefault();
             this.loading = true;
-            let response = await fetch('http://localhost:8080/api', {
+            let response = await fetch('https://envoy-playground.fly.dev/api', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
