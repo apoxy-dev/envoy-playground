@@ -1,24 +1,22 @@
-# nginx playground
+# envoy playground
 
-This code is running at [nginx-playground.wizardzines.com](https://nginx-playground.wizardzines.com).
-There's a [blog post](https://jvns.ca/blog/2021/09/24/new-tool--an-nginx-playground/) that
-explains the design.
+This code is running at [envoy-playground.apoxy.dev](https://envoy-playground.apoxy.dev).
 
-## mostly unmaintained
+It is based on the [nginx-playground](https://github.com/jvns/nginx-playground) project.
 
-I haven't made any changes to this code for a couple of years and I don't
-intend to add new features.
+## maintained by Apoxy
 
-I'm open to merging bug fixes though, and if you find a bug I'd like to hear
-about it in the issues. 
+This project is maintained by [Apoxy](https://apoxy.dev). If you find an issue
+feel free to either open a pull request with the fix or create an issue.
 
 ## things you might want to change
 
-Some things that are specific to my deployment of this code, that you'll
-want to remove or change if you make significant changes:
+If you fork this project again, jvns has noted a few things that are specific
+to this deployment of this code, that you'll want to remove or change if you
+make significant changes:
 
-* "a wizard zines project" in the header
-* the analytics (grep for `plausible`)
+* the header
+* the analytics (grep for `posthog`)
 * the `fly.toml`
 * the FAQ
 
