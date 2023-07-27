@@ -2,22 +2,27 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> nginx playground </title>
+    <title>Envoy Playground</title>
     <link rel="stylesheet" type="text/css" href="css/tailwind-classes.css" />
+    <link href='https://fonts.googleapis.com/css?family=IBM Plex Mono' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <style>
-    body {
+    header {
         font-family: Inter;
+    }
+    body {
+        font-family: IBM Plex Mono, monospace;
     }
 </style>
 
 
 <header style="height: 60px" class="flex justify-between p-2 border-b border-gray-400">
     <div>
-        <h1 class="text-2xl md:text-3xl inline-block"><a href="/">★ nginx playground ★</a></h1>
-        <div class="inline-block ml-4">a <a class="text-purple-700 underline" href="https://wizardzines.com">wizard zines</a> project</div>
+        <h1 class="text-2xl md:text-3xl inline-block"><a href="/">Envoy Playground</a></h1>
+        <div class="inline-block ml-2">an <a class="text-purple-700 underline" href="https://apoxy.dev">Apoxy</a> project</div>
+	<div class="inline-block ml-2"><p class="text-xs">(inspired by <a class="text-purple-700 underline" href="https://wizardzines.com/">Wizard Zines</a>)</p></div>
     </div>
 </header>
 
@@ -27,16 +32,17 @@
     </h1>
 
     <p class="my-4">
-        It's like <a class="underline text-purple-700" href="https://codepen.io">codepen</a> for nginx -- you paste in an nginx config, and then a server starts nginx for you and runs any <code>curl</code> or <code>http</code> command you want against
-        that nginx server.
+    It's like <a class="underline text-purple-700" href="https://nginx-playground.wizardzines.com">Nginx Playground</a> but for Envoy - you paste in an
+    <a class="underline text-purple-700" href="https://www.envoyproxy.io/docs/envoy/latest/configuration/overview/examples">Envoy config</a>, and then
+    a server starts Envoy for you and runs any <code>curl</code> or <code>http</code> command you want against that Envoy Proxy server.
     </p>
 
     <h1 class="text-2xl">
-        Does it really run nginx?
+        Does it really run Envoy?
     </h1>
 
     <p class="my-4">
-        Yes. Every time you hit "run", it'll start an instance of nginx 1.21.
+        Yes. Every time you hit "run", it'll start an instance of <a class="underline text-purple-700" href="https://www.envoyproxy.io/docs/envoy/v1.27.0/version_history/v1.27/v1.27.0">Envoy v1.27</a>.
     </p>
     <h1 class="text-2xl">
         What services are running on the host?
@@ -53,14 +59,10 @@
     </h1>
 
     <p class="my-4">
-        There's no validation on what kinds of nginx configs you can use, and I'm sure there's some way to you run arbitrary code. Please don't do anything too malicious, I guess? The frontend is a static site, so all you can do is compromise a mostly stateless
-        backend API server.
+        Same as <a class="underline text-purple-700" href="https://nginx-playground.wizardzines.com/faq.html">original project</a> - world class ;-)
     </p>
     <p class="my-4">
-        Your nginx runs in a separate network namespace that's disconnected from the host, so it's not able to make requests to the outside world.
-    </p>
-    <p class="my-4">
-        I wouldn't paste anything extremely sensitive into this site, but you probably shouldn't be pasting sensitive things into random internet websites anyway :)
+        Your Envoy still runs in a separate network namespace that's disconnected from the host, so it's not able to make requests to the outside world.
     </p>
 
     <h1 class="text-2xl">
@@ -68,7 +70,8 @@
     </h1>
 
     <p class="my-4">
-      Here's the <a class="underline text-purple-700" href="https://github.com/jvns/nginx-playground/">Github repository</a>. The backend is in <code>api/</code> and the frontend is in <code>static/</code>.
+      We forked the <a class="underline text-purple-700" href="https://github.com/jvns/nginx-playground/">original repo</a> and now it's
+      <a class="underline text-purple-700" href="https://github.com/apoxy-dev/envoy-playground">here</a>.
     </p>
 
     <h1 class="text-2xl">
@@ -76,7 +79,7 @@
     </h1>
 
     <p class="my-4">
-        <a class="underline text-purple-700" href="https://jvns.ca">Julia Evans</a>
+        The <a class="underline text-purple-700" href="https://apoxy.dev">Apoxy team</a> with heavy inspiration from <a class="underline text-purple-700" href="https://jvns.ca">Julia Evans</a>.
     </p>
 </div>
 </body>
