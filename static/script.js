@@ -7,7 +7,7 @@ const app = Vue.createApp({
             envoy_config: "",
             curl_command: "",
             curl_result: "",
-            nginx_cm: undefined,
+            envoy_cm: undefined,
             curl_cm: undefined,
             default_configs: {},
             error: false,
@@ -21,14 +21,15 @@ const app = Vue.createApp({
         this.envoy_config = state.envoy_config;
         this.curl_command = state.curl_command;
 
-        // create nginx codemirror
-        const nginxArea = document.querySelector('#nginx');
-        nginxArea.innerHTML = this.envoy_config;
-        this.nginx_cm = CodeMirror.fromTextArea(nginxArea, {
+        // create envoy codemirror
+        const envoyArea = document.querySelector('#envoy');
+        envoyArea.innerHTML = this.envoy_config;
+        this.envoy_cm = CodeMirror.fromTextArea(envoyArea, {
             lineNumbers: true,
-            mode: 'nginx',
+            mode: 'yaml',
+            height: 'auto',
         });
-        this.nginx_cm.setSize('100%', '100%')
+        this.curl_cm.setSize('100%', '100%');
 
         // create curl codemirror
         const curlArea = document.querySelector('#curl');
@@ -40,7 +41,7 @@ const app = Vue.createApp({
         this.curl_cm.setSize('100%', '100%');
 
         // set change handlers
-        this.nginx_cm.on('change', cm => this.update(cm.getValue(), undefined))
+        this.envoy_cm.on('change', cm => this.update(cm.getValue(), undefined))
         this.curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
     },
     methods: {

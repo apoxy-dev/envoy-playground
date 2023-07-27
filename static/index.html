@@ -2,8 +2,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> nginx playground </title>
-    <script defer data-domain="nginx-playground.wizardzines.com" src="https://plausible.io/js/script.tagged-events.js"></script>
+    <title> Envoy Playground </title>
     <link rel="stylesheet" type="text/css" href="css/tailwind-classes.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -18,7 +17,7 @@
     <div id="app">
         <header style="height: 60px" class="flex justify-between p-2">
             <div>
-                <h1 class="text-2xl md:text-3xl inline-block"><a href="/">★ nginx playground ★</a></h1>
+                <h1 class="text-2xl md:text-3xl inline-block"><a href="/">Envoy Playground</a></h1>
                 <div class="inline-block ml-4">a <a class="text-purple-700 underline" href="https://wizardzines.com">wizard zines</a> project</div>
             </div>
             <div class="flex text-xl mr-8">
@@ -46,13 +45,13 @@
                         <div class="flex">
                             <div class="flex-shrink p-2 bg-white" style="margin-top: 2px">
                                 <div class="text-xl">
-                                    <img class="inline" style="height: 1em" src="nginx.svg"> nginx config
+                                    <img class="inline" style="height: 1em" src="nginx.svg"> envoy config
                                 </div>
                             </div>
                         </div>
 
                         <div style="height: calc(100% - 48px)">
-                            <textarea id="nginx" class="w-full h-full"></textarea>
+                            <textarea id="envoy" class="w-full h-full"></textarea>
                         </div>
                     </div>
                 </div>
@@ -128,7 +127,7 @@
 
 <script src="js/vue.global.prod.js"></script>
 <script src="codemirror-5.63.0/lib/codemirror.js"></script>
-<script src="codemirror-5.63.0/mode/nginx/nginx.js"></script>
+<script src="codemirror-5.63.0/mode/yaml/yaml.js"></script>
 <script src="codemirror-5.63.0/mode/shell/shell.js"></script>
 <script src="codemirror-5.63.0/mode/javascript/javascript.js"></script>
 <link rel="stylesheet" href="codemirror-5.63.0/lib/codemirror.css">
